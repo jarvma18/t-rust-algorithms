@@ -11,6 +11,6 @@ Everything is under MIT license, more information in LICENSE.md file.
 ### Algorithm Folder Structure
 
 * README.md - Should contain overview and basic information of specific algorithm
-* <algorithm name>.rs - Main file to compile and execute e.g. huffman.rs
-* <test file>_test.rs - FIle containing tests, if there are plenty, place the test to same root folder
+* algorithm name.rs - Main file to compile and execute e.g. huffman.rs
+* algorithm_name_test.rs - FIle containing tests, if there are plenty, place the test to same root folder
 
