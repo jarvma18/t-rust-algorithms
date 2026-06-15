@@ -6,7 +6,7 @@ Everything is under MIT license, more information in LICENSE.md file.
 ## Folder Structure
 
 * /docs - Repository documentation
-* /algorithms - Folder to store different algorithms (one algorithm, one folder)
+* /<algorithm_name> - Folder to store certain algorithm, give it a algorithm's name
 
 ### Algorithm Folder Structure
 
