@@ -4,7 +4,6 @@ This is a collection of different algorithms implemented with Rust programming l
 
 ## Folder Structure
 
-* /docs - Repository documentation
 * /<algorithm_name> - Folder to store certain algorithm, give it a algorithm's name
 
 ### Algorithm Folder Structure
