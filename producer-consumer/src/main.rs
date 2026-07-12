@@ -10,8 +10,16 @@ fn main() {
         let producer_buffer = Arc::clone(&buffer);
         thread::spawn(move || {
             loop {
-                producer_buffer.lock().unwrap().push(42);
-                thread::sleep(Duration::from_millis(150));
+                {
+                    let mut locked_producer_buffer = producer_buffer.lock().unwrap();
+                    if locked_producer_buffer.len() < 5 {
+                        locked_producer_buffer.push(42);
+                    }
+                    else {
+                        println!("Buffer is full");
+                    }
+                }
+                thread::sleep(Duration::from_millis(99));
             }
         })
     };
@@ -41,7 +49,7 @@ fn main() {
                         locked_consumer_buffer.remove(0);
                     }
                 }
-                thread::sleep(Duration::from_millis(200));
+                thread::sleep(Duration::from_millis(100));
             }
         })
     };
