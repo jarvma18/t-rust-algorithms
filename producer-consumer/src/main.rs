@@ -1,9 +1,10 @@
 use std::sync::{Mutex, Arc};
 use std::thread;
 use std::time::Duration;
+use std::collections::VecDeque;
 
 fn main() {
-  let buffer = Arc::new(Mutex::new(Vec::<i32>::new()));
+  let buffer = Arc::new(Mutex::new(VecDeque::<i32>::with_capacity(5)));
   println!("Starting producers and consumers..");
 
   let producer = {
@@ -13,7 +14,7 @@ fn main() {
         {
           let mut locked_producer_buffer = producer_buffer.lock().unwrap();
           if locked_producer_buffer.len() < 5 {
-            locked_producer_buffer.push(42);
+            locked_producer_buffer.push_front(42);
           }
           else {
             println!("Buffer is full");
@@ -46,7 +47,7 @@ fn main() {
             println!("Buffer is empty");
           }
           else {
-            locked_consumer_buffer.remove(0);
+            locked_consumer_buffer.pop_back();
           }
         }
         thread::sleep(Duration::from_millis(100));
