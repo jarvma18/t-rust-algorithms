@@ -61,6 +61,17 @@ fn spawn_producer(buffer: Arc<BoundedBuffer>) -> JoinHandle<()> {
   })
 }
 
+fn spawn_consumer(buffer: Arc<BoundedBuffer>) -> JoinHandle<()> {
+  thread::spawn(move || {
+    loop {
+      {
+        buffer.consume();
+      }
+      thread::sleep(Duration::from_millis(1000));
+    }
+  })
+}
+
 fn main() {
   const CAPACITY: usize = 5;
 
@@ -72,20 +83,8 @@ fn main() {
   println!("\n");
 
   let buffer = Arc::new(BoundedBuffer::new(CAPACITY));
-  let consumer_buffer = Arc::clone(&buffer);
-
   let producer = spawn_producer(Arc::clone(&buffer));
-
-  let consumer = {
-    thread::spawn(move || {
-      loop {
-        {
-          consumer_buffer.consume();
-        }
-        thread::sleep(Duration::from_millis(1000));
-      }
-    })
-  };
+  let consumer = spawn_consumer(Arc::clone(&buffer));
   producer.join().unwrap();
   consumer.join().unwrap();
 }
