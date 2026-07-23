@@ -2,6 +2,7 @@ use std::sync::{Mutex, Arc, Condvar};
 use std::thread;
 use std::time::Duration;
 use std::collections::VecDeque;
+use std::thread::JoinHandle;
 
 struct Inner {
   data: VecDeque<i32>
@@ -49,6 +50,17 @@ impl BoundedBuffer {
   }
 }
 
+fn spawn_producer(buffer: Arc<BoundedBuffer>) -> JoinHandle<()> {
+  thread::spawn(move || {
+    loop {
+      {
+        buffer.produce(42);
+      }
+      thread::sleep(Duration::from_millis(1000));
+    }
+  })
+}
+
 fn main() {
   const CAPACITY: usize = 5;
 
@@ -60,19 +72,9 @@ fn main() {
   println!("\n");
 
   let buffer = Arc::new(BoundedBuffer::new(CAPACITY));
-  let producer_buffer = Arc::clone(&buffer);
   let consumer_buffer = Arc::clone(&buffer);
 
-  let producer = {
-    thread::spawn(move || {
-      loop {
-        {
-          producer_buffer.produce(42);
-        }
-        thread::sleep(Duration::from_millis(1000));
-      }
-    })
-  };
+  let producer = spawn_producer(Arc::clone(&buffer));
 
   let consumer = {
     thread::spawn(move || {
