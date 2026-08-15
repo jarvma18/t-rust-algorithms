@@ -9,6 +9,5 @@ This is a collection of different algorithms implemented with Rust programming l
 ### Algorithm Folder Structure
 
 * README.md - Should contain overview and basic information of specific algorithm
-* src/main.rs - Main file to compile and execute
-* tests/main_test.rs - File containing tests
+* src/main.rs - Main file to compile and execute with tests
 
