@@ -95,6 +95,7 @@ mod tests {
   use super::*;
 
   #[test]
+  // Basic test to produce one item and consumer it right away
   fn test_should_produce_and_consumer_item() {
     let buffer = Arc::new(BoundedBuffer::new(1));
     buffer.produce(1);
@@ -102,6 +103,9 @@ mod tests {
   }
 
   #[test]
+  // Test that buffer is behaving with FIFO (first-in, first-out)
+  // principle, checking that each produced item is consumed in
+  // right order
   fn test_should_produce_and_consumer_items_in_order() {
     let buffer = Arc::new(BoundedBuffer::new(5));
     buffer.produce(1);
@@ -121,13 +125,6 @@ mod tests {
    // and producer tries to add more stuff into it. Producer
    // should be blocked until more space is available in the
    // buffer.
-   // Create buffer of capacity of 1 and produce 1 to it. Then
-   // create clone of that buffer and start another thread for
-   // another producer. That cloned buffer point to same place
-   // than the original one. Try to produce item to the buffer
-   // and assert that producer is NOT finished. Then consume
-   // the 1 item from buffer to allow another producer to produce
-   // item 2 into it.
     fn producer_blocks_when_buffer_is_full() {
       let buffer = Arc::new(BoundedBuffer::new(1));
       buffer.produce(1);
@@ -145,11 +142,8 @@ mod tests {
 
     #[test]
     // This test is created for scenario, where consumer tries
-    // to consume buffer when it is empty. Create buffer of
-    // capacity of 1. Create clone of that buffer and start
-    // new thread of consumer. When buffer is empty, assert that
-    // consumer is NOT finished. Produce item into buffer and
-    // consumer should wake up.
+    // to consume buffer when it is empty. Consumer should be
+    // blocked until there is something to consume
     fn consumer_blocks_when_buffer_is_empty() {
       let buffer = Arc::new(BoundedBuffer::new(1));
       let buffer_clone = Arc::clone(&buffer);
@@ -166,12 +160,7 @@ mod tests {
     #[test]
     // This is for scenario where more items are tried to
     // be produces into buffer even though its capacity has
-    // been reached. Create new buffer of capacity of 2.
-    // Produce 1 and 2 into it and start another thread of
-    // producer which tries to produce third item into it.
-    // Assert that producer is NOT finished, consume the
-    // buffer to free up space and then the producer should
-    // wake up.
+    // been reached.
     fn buffer_respects_capacity() {
       let buffer = Arc::new(BoundedBuffer::new(2));
       buffer.produce(1);
