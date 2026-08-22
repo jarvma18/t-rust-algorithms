@@ -125,7 +125,7 @@ mod tests {
    // and producer tries to add more stuff into it. Producer
    // should be blocked until more space is available in the
    // buffer.
-    fn producer_blocks_when_buffer_is_full() {
+    fn test_should_block_producer_when_buffer_is_full() {
       let buffer = Arc::new(BoundedBuffer::new(1));
       buffer.produce(1);
       let buffer_clone = Arc::clone(&buffer);
@@ -144,7 +144,7 @@ mod tests {
     // This test is created for scenario, where consumer tries
     // to consume buffer when it is empty. Consumer should be
     // blocked until there is something to consume
-    fn consumer_blocks_when_buffer_is_empty() {
+    fn test_should_block_consumer_when_buffer_is_empty() {
       let buffer = Arc::new(BoundedBuffer::new(1));
       let buffer_clone = Arc::clone(&buffer);
       let consumer = thread::spawn(move || {
@@ -161,7 +161,7 @@ mod tests {
     // This is for scenario where more items are tried to
     // be produces into buffer even though its capacity has
     // been reached.
-    fn buffer_respects_capacity() {
+    fn test_should_respect_buffer_capacity() {
       let buffer = Arc::new(BoundedBuffer::new(2));
       buffer.produce(1);
       buffer.produce(2);
