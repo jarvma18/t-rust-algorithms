@@ -111,7 +111,7 @@ use std::thread::JoinHandle;
 
 #[derive(Debug, Clone)]
 struct Fork {
-  in_use: bool
+
 }
 
 #[derive(Debug, Clone)]
@@ -127,29 +127,30 @@ enum PhilosopherKind {
   NormalBehaving
 }
 
-struct Philosopher<'a> {
-  left_fork: Arc<Mutex<&'a Fork>>,
-  right_fork: Arc<Mutex<&'a Fork>>,
+#[derive(Debug)]
+struct Philosopher {
+  left_fork: Arc<Fork>,
+  right_fork: Arc<Fork>,
   fork_preference: ForkPreference,
   dine_count: usize,
   kind: PhilosopherKind
 }
 
-struct DiningTable<'a> {
-  philosophers: Vec<Philosopher<'a>>,
-  forks: Vec<Fork>,
+#[derive(Debug)]
+struct DiningTable {
+  philosophers: Vec<Philosopher>
 }
 
 impl Fork {
   pub fn new() -> Self {
     Self {
-      in_use: false
+
     }
   }
 }
 
-impl<'a> Philosopher<'a> {
-  pub fn new(left_fork: Arc<Mutex<&'a Fork>>, right_fork: Arc<Mutex<&'a Fork>>, fork_preference: ForkPreference, kind: PhilosopherKind) -> Self {
+impl Philosopher {
+  pub fn new(left_fork: Arc<Fork>, right_fork: Arc<Fork>, fork_preference: ForkPreference, kind: PhilosopherKind) -> Self {
     Self {
       left_fork: left_fork,
       right_fork: right_fork,
@@ -160,9 +161,34 @@ impl<'a> Philosopher<'a> {
   }
 }
 
-impl<'a> DiningTable<'a> {
-  pub fn new(philosopher_amount: usize) {
-    
+impl DiningTable {
+  pub fn new(seat_amount: usize) -> Self {
+    let mut forks = Vec::with_capacity(seat_amount);
+    for n in 0..seat_amount {
+      forks.push(Arc::new(Fork::new()));
+    }
+    let mut philosophers = Vec::with_capacity(seat_amount);
+    for n in 0..seat_amount {
+      if n == seat_amount - 1 {
+        let left_fork = Arc::clone(&forks[n]);
+        let right_fork = Arc::clone(&forks[0]);
+        philosophers.push(Philosopher::new(left_fork, right_fork, ForkPreference::Left, PhilosopherKind::Impatient));
+      }
+      else {
+        let left_fork = Arc::clone(&forks[n]);
+        let right_fork = Arc::clone(&forks[n+1]);
+        let is_even = n % 2 == 0;
+        if is_even {
+          philosophers.push(Philosopher::new(left_fork, right_fork, ForkPreference::Left, PhilosopherKind::NormalBehaving));
+        }
+        else {
+          philosophers.push(Philosopher::new(left_fork, right_fork, ForkPreference::Right, PhilosopherKind::Lazy));
+        }
+      }
+    }
+    Self {
+      philosophers: philosophers
+    }
   }
 }
 
@@ -174,9 +200,5 @@ fn main() {
   println!("##########################################");
   println!("\n");
 
-  const FORK_AMOUNT: usize = 5;
-  let mut forks = Vec::with_capacity(FORK_AMOUNT);
-  for n in 0..FORK_AMOUNT {
-    forks.push(Fork::new());
-  }
+  println!("{:?}", DiningTable::new(5));
 }
