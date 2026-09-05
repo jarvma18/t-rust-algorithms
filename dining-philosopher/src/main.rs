@@ -200,5 +200,7 @@ fn main() {
   println!("##########################################");
   println!("\n");
 
+  // This works, but we'll need to implement mutex to fork thing next, otherwise
+  // we are heading for right direction in this program imo
   println!("{:?}", DiningTable::new(5));
 }
