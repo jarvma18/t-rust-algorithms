@@ -111,7 +111,6 @@ use std::thread::JoinHandle;
 
 #[derive(Debug, Clone)]
 struct Fork {
-
 }
 
 #[derive(Debug, Clone)]
@@ -129,8 +128,8 @@ enum PhilosopherKind {
 
 #[derive(Debug)]
 struct Philosopher {
-  left_fork: Arc<Fork>,
-  right_fork: Arc<Fork>,
+  left_fork: Arc<Mutex<Fork>>,
+  right_fork: Arc<Mutex<Fork>>,
   fork_preference: ForkPreference,
   dine_count: usize,
   kind: PhilosopherKind
@@ -150,7 +149,7 @@ impl Fork {
 }
 
 impl Philosopher {
-  pub fn new(left_fork: Arc<Fork>, right_fork: Arc<Fork>, fork_preference: ForkPreference, kind: PhilosopherKind) -> Self {
+  pub fn new(left_fork: Arc<Mutex<Fork>>, right_fork: Arc<Mutex<Fork>>, fork_preference: ForkPreference, kind: PhilosopherKind) -> Self {
     Self {
       left_fork: left_fork,
       right_fork: right_fork,
@@ -165,7 +164,7 @@ impl DiningTable {
   pub fn new(seat_amount: usize) -> Self {
     let mut forks = Vec::with_capacity(seat_amount);
     for n in 0..seat_amount {
-      forks.push(Arc::new(Fork::new()));
+      forks.push(Arc::new(Mutex::new(Fork::new())));
     }
     let mut philosophers = Vec::with_capacity(seat_amount);
     for n in 0..seat_amount {
@@ -201,6 +200,11 @@ fn main() {
   println!("\n");
 
   // This works, but we'll need to implement mutex to fork thing next, otherwise
-  // we are heading for right direction in this program imo
-  println!("{:?}", DiningTable::new(5));
+  // we are heading for right direction in this program imo <-- implemented
+  // next we'll need to invent the dining threads and logic for that, basically
+  // we need to individual philosophers to grab those forks and get eating e.g.
+  // have them lock on the fork that they get (philosophers have arc and mutex for that reason)
+  let dining_table = DiningTable::new(5);
+  println!("{:?}", dining_table);
+
 }
