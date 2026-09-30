@@ -1,20 +1,19 @@
-use std::sync::{Mutex, Arc, Condvar};
+use std::sync::{Mutex, Arc};
 use std::thread;
 use std::time::Duration;
 use std::vec::Vec;
-use std::thread::JoinHandle;
 
 #[derive(Debug, Clone)]
 struct Fork {
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Copy)]
 enum ForkPreference {
   Left,
   Right
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Copy)]
 enum PhilosopherKind {
   Lazy,
   Impatient,
