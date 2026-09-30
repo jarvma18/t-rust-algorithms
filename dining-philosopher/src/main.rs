@@ -141,8 +141,54 @@ fn main() {
   println!("##########################################");
   println!("\n");
 
-  // Base for dine is done, next must implement the individual
-  // philosopher logic based on their attributes
+  // Now, there is initial philosopher problem solved here
+  // continue with this idea:
+  // fn try_to_eat(&self, i: usize, timeout: Duration) -> bool {
+  //   let (first, second) = match self.philosophers[i].fork_preference {
+  //       ForkPreference::Left => (
+  //           &self.philosophers[i].left_fork,
+  //           &self.philosophers[i].right_fork,
+  //       ),
+  //       ForkPreference::Right => (
+  //           &self.philosophers[i].right_fork,
+  //           &self.philosophers[i].left_fork,
+  //       ),
+  //   };
+
+  //   let Some(_first_guard) = lock_with_timeout(first, timeout) else {
+  //       println!("{i} couldn't get first fork -> thinking");
+  //       return false;
+  //   };
+
+  //   let Some(_second_guard) = lock_with_timeout(second, timeout) else {
+  //       println!("{i} couldn't get second fork -> thinking");
+  //       return false;
+  //   };
+
+  //   println!("{i} is eating");
+  //   self.increment_dine_counter(i);
+  //   thread::sleep(Duration::from_millis(500));
+
+  //   true
+  // }
+        //            THINKING
+        //             │
+        //             ▼
+        //       try first fork
+        //        /          \
+        //   timeout          success
+        //      │                 │
+        //      ▼                 ▼
+        //  THINKING        try second fork
+        //                    /        \
+        //               timeout      success
+        //                  │            │
+        //                  ▼            ▼
+        //              THINKING       EATING
+        //                               │
+        //                               ▼
+        //                           THINKING
+
   let dining_table = DiningTable::new(5);
   println!("{:?}", dining_table);
   dining_table.dine();
