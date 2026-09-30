@@ -57,7 +57,7 @@ impl Philosopher {
 impl DiningTable {
   pub fn new(seat_amount: usize) -> Self {
     let mut forks = Vec::with_capacity(seat_amount);
-    for n in 0..seat_amount {
+    for _n in 0..seat_amount {
       forks.push(Arc::new(Mutex::new(Fork::new())));
     }
     let mut philosophers = Vec::with_capacity(seat_amount);
