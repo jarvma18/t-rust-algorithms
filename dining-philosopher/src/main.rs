@@ -25,7 +25,7 @@ struct Philosopher {
   left_fork: Arc<Mutex<Fork>>,
   right_fork: Arc<Mutex<Fork>>,
   fork_preference: ForkPreference,
-  dine_count: usize,
+  dine_count: Mutex<usize>,
   kind: PhilosopherKind
 }
 
@@ -48,7 +48,7 @@ impl Philosopher {
       left_fork: left_fork,
       right_fork: right_fork,
       fork_preference: fork_preference,
-      dine_count: 0,
+      dine_count: 0.into(),
       kind: kind
     }
   }
@@ -82,6 +82,19 @@ impl DiningTable {
     Self {
       philosophers: philosophers
     }
+  }
+
+  fn get_interval_for_philosopher(philosopher_kind: PhilosopherKind) -> u64 {
+    match philosopher_kind {
+      PhilosopherKind::Lazy => 10_000,
+      PhilosopherKind::Impatient => 2_000,
+      PhilosopherKind::NormalBehaving => 5_000,
+    }
+  }
+
+  pub fn increment_dine_counter(&self, i: usize) {
+    let mut counter = self.philosophers[i].dine_count.lock().unwrap();
+    *counter += 1;
   }
 
   pub fn dine(&self) {
