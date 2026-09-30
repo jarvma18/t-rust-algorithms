@@ -100,10 +100,32 @@ impl DiningTable {
   pub fn dine(&self) {
     thread::scope(|s| {
       for i in 0..5 {
+        let interval = Self::get_interval_for_philosopher(self.philosophers[i].kind);
+        let fork_preference = self.philosophers[i].fork_preference;
+        // println!("{:?}", interval);
         s.spawn(move || {
           loop {
-            println!("{:?}", self.philosophers[i]);
-            thread::sleep(Duration::from_millis(1000));
+            // println!("{:?}", self.philosophers[i]);
+            match fork_preference {
+              ForkPreference::Left => {
+                println!("{:?} is trying to pick up forks", i);
+                let left_ = self.philosophers[i].left_fork.lock().unwrap();
+                let right_ = self.philosophers[i].right_fork.lock().unwrap();
+                println!("{:?} is eating", i);
+                self.increment_dine_counter(i);
+                thread::sleep(Duration::from_millis(interval));
+              }
+              ForkPreference::Right => {
+                println!("{:?} is trying to pick up forks", i);
+                let right_ = self.philosophers[i].right_fork.lock().unwrap();
+                let left_ = self.philosophers[i].left_fork.lock().unwrap();
+                println!("{:?} is eating", i);
+                self.increment_dine_counter(i);
+                thread::sleep(Duration::from_millis(interval));
+              }
+            }
+            println!("{:?} ate", i);
+            thread::sleep(Duration::from_millis(interval));
           }
         });
       }
